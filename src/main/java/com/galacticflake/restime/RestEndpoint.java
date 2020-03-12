@@ -48,11 +48,36 @@ public class RestEndpoint {
 	public void setEndpoint(String endpoint) {
 		if (endpoint == null)
 			throw new RuntimeException("Invalid argument endpoint null");
+		if (endpoint.endsWith("?"))
+			endpoint = endpoint.substring(0, endpoint.length()-1);
 		this.endpoint = endpoint;
 	}
 	
 	public String getEndpoint() {
 		return endpoint;
+	}
+	
+	public String getQueryString() {
+		int i = endpoint.indexOf('?');
+		if (i != -1) {
+			return endpoint.substring(i+1);
+		} else {
+			if (endpoint.contains("=") || endpoint.contains("&"))
+				throw new RuntimeException("Not implemented xd");
+			return "";
+		}
+	}
+
+	public String getFullPath() {
+		String query = getQueryString();
+		if (query.isEmpty())
+			return endpoint;
+		String path = endpoint.substring(0, endpoint.length()-query.length());
+		if (path.endsWith("?"))
+			path = endpoint.substring(0, path.length()-1);
+		if (path.endsWith("/"))
+			path = endpoint.substring(0, path.length()-1);
+		return path;
 	}
 	
 }

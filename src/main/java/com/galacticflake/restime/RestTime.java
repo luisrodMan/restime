@@ -9,7 +9,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 
-public class App {
+public class RestTime {
 	
 	private JFrame frame = new JFrame("RESTime");
 	
@@ -17,10 +17,10 @@ public class App {
 	private JButton newRequestBtn = new JButton("New Request");
 	private JButton saveBtn = new JButton("Save");
 	private JTabbedPane tabs = new JTabbedPane();
-	private JTree tree = new JTree();
-	private JSplitPane contentSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tree, tabs);
+	private ProjectExplorer projectExplorer = new ProjectExplorer();
+	private JSplitPane contentSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectExplorer.getControlView(), tabs);
 	
-	public App() {
+	public RestTime() {
 		
 		toolbar.add(newRequestBtn);
 		toolbar.add(saveBtn);
@@ -38,13 +38,23 @@ public class App {
 	
 	private void newRequestAction() {
 		NewEndpointDialog.show(endpoint -> {
-			Editor editor = new RestEditor(endpoint);
-			tabs.addTab(editor.getViewName(), editor.getControlView());
+			Project project = projectExplorer.getSelectedProject();
+			if (project == null) {
+				project = new Project("No saved");
+				projectExplorer.addProject(project);
+			}
+			project.addEndpoint(endpoint);
+			openEndpointAction(endpoint);
 		}, frame);
 	}
 	
+	private void openEndpointAction(RestEndpoint endpoint) {
+		Editor editor = new RestEditor(endpoint);
+		tabs.addTab(editor.getViewName(), editor.getControlView());
+	}
+	
 	public static void main(String[] args) {
-		new App();
+		new RestTime();
 	}
 	
 }

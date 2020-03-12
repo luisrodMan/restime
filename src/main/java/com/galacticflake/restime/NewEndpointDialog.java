@@ -19,8 +19,8 @@ public class NewEndpointDialog extends JFrame {
 	
 	public static void show(Consumer<RestEndpoint> consumer, Component component) {
 		JFrame frame = new NewEndpointDialog(consumer);
-		frame.setLocationRelativeTo(component);
 		frame.pack();
+		frame.setLocationRelativeTo(component);
 		frame.setVisible(true);
 	}
 	
