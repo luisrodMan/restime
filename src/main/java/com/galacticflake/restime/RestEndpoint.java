@@ -1,5 +1,8 @@
 package com.galacticflake.restime;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RestEndpoint {
 	
 	public static final String GET = "GET";
@@ -10,6 +13,9 @@ public class RestEndpoint {
 	private String name;
 	private String method = "GET";
 	private String endpoint;
+	private String contentType;
+	private String content;
+	private Map<String, String> headers = new HashMap<>();
 	
 	public RestEndpoint(String name) {
 		this(name, "GET", null);
@@ -78,6 +84,30 @@ public class RestEndpoint {
 		if (path.endsWith("/"))
 			path = endpoint.substring(0, path.length()-1);
 		return path;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+	
+	public String getContent() {
+		return content;
+	}
+
+	public void addHeader(String name, String value) {
+		headers.put(name, value);
+	}
+	
+	public String getHeader(String name) {
+		return headers.get(name);
 	}
 	
 }

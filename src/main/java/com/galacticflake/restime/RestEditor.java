@@ -3,6 +3,7 @@ package com.galacticflake.restime;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -19,8 +20,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 public class RestEditor extends JPanel implements Editor {
 
@@ -32,13 +35,15 @@ public class RestEditor extends JPanel implements Editor {
 	private JTextField endpointtxt = new JTextField(30);
 	private JButton runBtn = new JButton("Run");
 	
-	private JTextArea requestHeaderArea = new JTextArea();
+	private JTable requestHeaderTable = new JTable(new Object[][] {{"testheaderxd", "test value"}}, new String[] {"Name", "Value"});
+	private JButton requestHeaderAddBtn = new JButton("Add"), requestHeaderDelBtn = new JButton("Remove");
+	
 	private JTextArea requestContentArea = new JTextArea();
 	private JTextArea responseHeaderArea = new JTextArea();
 	private JTextArea responseContentArea = new JTextArea();
 	
 	private class Container extends JPanel {
-
+		
 		private static final long serialVersionUID = 1L;
 		
 		public Container(String title, JComponent component) {
@@ -76,7 +81,9 @@ public class RestEditor extends JPanel implements Editor {
 		
 	}
 	
-	private JSplitPane requestSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new Container("Request Header", new JScrollPane(requestHeaderArea)), new RequestContentView());
+	private JScrollPane requestHeaderScroll = new JScrollPane(requestHeaderTable);
+	
+	private JSplitPane requestSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new Container("Request Header", requestHeaderScroll), new RequestContentView());
 	private JSplitPane responseSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new Container("Response Header", new JScrollPane(responseHeaderArea)), new Container("Response Content", new JScrollPane(responseContentArea)));
 	private JSplitPane editorSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, requestSplit, responseSplit);
 	
@@ -98,6 +105,13 @@ public class RestEditor extends JPanel implements Editor {
 		requestMethodcb.addItem("POST");
 		requestMethodcb.addItem("PUT");
 		requestMethodcb.addItem("DELETE");
+		
+		// request headers panel
+		JPanel requestHeaderToolbar = new JPanel();
+		requestHeaderToolbar.add(requestHeaderAddBtn);
+		requestHeaderToolbar.add(requestHeaderDelBtn);
+		requestHeaderAddBtn.addActionListener(e -> ((DefaultTableModel)requestHeaderTable.getModel()).addRow(new String[] {"", ""}));
+		requestHeaderDelBtn.addActionListener(e -> ((DefaultTableModel)requestHeaderTable.getModel()).removeRow(requestHeaderTable.getSelectedRow()));
 		
 		requestContentTypecb.setEditable(true);
 		requestContentTypecb.addItem("application/json");
@@ -127,7 +141,7 @@ public class RestEditor extends JPanel implements Editor {
 			connection.setDoOutput(true);
 			
 			// request headers
-			String requestHeaderContent = requestHeaderArea.getText();
+			String requestHeaderContent = null;//requestHeaderArea.getText();
 			if (requestHeaderContent != null) {
 				requestHeaderContent = requestHeaderContent.trim();
 				if (!requestHeaderContent.isEmpty()) {
@@ -160,11 +174,8 @@ public class RestEditor extends JPanel implements Editor {
 			responseHeaderArea.setText(responseHeaderContent);
 			
 			// response content
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String responseLine = null;
-			while ((responseLine=reader.readLine()) != null) {
-				responseContentArea.setText(responseContentArea.getText() + System.lineSeparator() + responseLine);
-			}
+			String responseContent = ResTimeUtil.read(connection.getResponseCode()==200? connection.getInputStream() : connection.getErrorStream()); 
+			responseContentArea.setText(responseContent);
 			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
