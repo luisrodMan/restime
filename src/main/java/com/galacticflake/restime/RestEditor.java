@@ -25,7 +25,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class RestEditor extends JPanel implements Editor {
+import com.galacticflake.restime.projectsupport.ProjectExporter;
+
+public class RestEditor extends JPanel implements IEditor {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -197,7 +199,10 @@ public class RestEditor extends JPanel implements Editor {
 	}
 
 	public void save() {
-		
+		if (endpoint.getFile() == null)
+			saveAs();
+		else
+			ProjectExporter.export(project, file);
 	}
 
 	public void saveAs() {

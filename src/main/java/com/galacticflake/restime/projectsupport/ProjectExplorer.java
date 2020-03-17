@@ -1,4 +1,4 @@
-package com.galacticflake.restime;
+package com.galacticflake.restime.projectsupport;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -11,7 +11,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-public class ProjectExplorer implements View {
+import com.galacticflake.restime.RestEndpoint;
+import com.galacticflake.restime.IView;
+
+public class ProjectExplorer implements IView {
 	
 	private class TreeNode extends DefaultMutableTreeNode {
 		

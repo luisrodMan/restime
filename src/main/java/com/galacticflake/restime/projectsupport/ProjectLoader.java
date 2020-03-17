@@ -1,4 +1,4 @@
-package com.galacticflake.restime;
+package com.galacticflake.restime.projectsupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,25 +7,37 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-public class Loader {
+import com.galacticflake.restime.RestEndpoint;
+
+public class ProjectLoader {
 	
-	public static Project load(File file) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
-		DocumentBuilder db = dbf.newDocumentBuilder();  
-		Document doc = db.parse(file);  
-		doc.getDocumentElement().normalize();
-		
+	public static Project load(File file) throws IOException, ProjectParsingException {
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(file);
+			doc.getDocumentElement().normalize();
+			String prjVersion = doc.getElementsByTagName("version").item(0).getTextContent().trim();
+			Project project = null;
+			if (prjVersion.equals("1.0")) {
+				project = loadv1_0(doc);
+			} else
+				throw new ProjectParsingException("project file version not valid!");
+			project.setPath(file.getAbsolutePath());
+			return project;
+		} catch (Exception e) {
+			throw new ProjectParsingException("Error on load file project: " + e.getMessage());
+		}
+	}
+	
+	public static Project loadv1_0(Document doc) {
 		String prjName = doc.getElementsByTagName("name").item(0).getTextContent();
-		
 		Project project = new Project(prjName);
-		project.setPath(file.getAbsolutePath());
 		
 		// read enpoints
 		Element endpointsE = getElement(doc.getElementsByTagName("endpoints"));

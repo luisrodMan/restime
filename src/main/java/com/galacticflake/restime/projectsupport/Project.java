@@ -1,7 +1,9 @@
-package com.galacticflake.restime;
+package com.galacticflake.restime.projectsupport;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import com.galacticflake.restime.RestEndpoint;
 
 public class Project {
 	
@@ -58,6 +60,10 @@ public class Project {
 
 	public int getEndpointsCount() {
 		return endpoints.size();
+	}
+
+	public String getVersion() {
+		return "1.0";
 	}
 
 }

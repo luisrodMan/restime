@@ -1,4 +1,7 @@
-package com.galacticflake.restime;
+package com.galacticflake.restime.projectsupport;
+
+import com.galacticflake.restime.Property;
+import com.galacticflake.restime.RestEndpoint;
 
 public interface ProjectListener {
 	

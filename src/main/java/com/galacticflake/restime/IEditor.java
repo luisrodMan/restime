@@ -1,6 +1,6 @@
 package com.galacticflake.restime;
 
-public interface Editor extends View {
+public interface IEditor extends IView {
 
 	boolean isDirty();
 	

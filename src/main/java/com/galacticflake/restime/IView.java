@@ -2,7 +2,7 @@ package com.galacticflake.restime;
 
 import javax.swing.JComponent;
 
-public interface View {
+public interface IView {
 
 	String getViewName();
 	
